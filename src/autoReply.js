@@ -9,38 +9,45 @@ function loadRepliedContacts() {
     try {
         if (fs.existsSync(REPLIED_FILE)) {
             const data = JSON.parse(fs.readFileSync(REPLIED_FILE, 'utf-8'));
-            return new Set(data);
+            // Handle migration from old array format (Set) to new Object format
+            if (Array.isArray(data)) {
+                const obj = {};
+                const now = Date.now();
+                data.forEach(num => obj[num] = now);
+                return obj;
+            }
+            return data || {};
         }
     } catch (err) {
         console.error('⚠️  Error loading replied contacts:', err.message);
     }
-    return new Set();
+    return {};
 }
 
-function saveRepliedContacts(repliedSet) {
+function saveRepliedContacts(repliedObj) {
     try {
         // Ensure data folder exists
         if (!fs.existsSync(config.dataFolder)) {
             fs.mkdirSync(config.dataFolder, { recursive: true });
         }
-        fs.writeFileSync(REPLIED_FILE, JSON.stringify([...repliedSet], null, 2));
+        fs.writeFileSync(REPLIED_FILE, JSON.stringify(repliedObj, null, 2));
     } catch (err) {
         console.error('⚠️  Error saving replied contacts:', err.message);
     }
 }
 
 function resetRepliedContacts() {
-    const emptySet = new Set();
-    saveRepliedContacts(emptySet);
-    return emptySet;
+    const emptyObj = {};
+    saveRepliedContacts(emptyObj);
+    return emptyObj;
 }
 
-// ─── The replied contacts set (in-memory + persisted) ──
+// ─── The replied contacts dictionary (in-memory + persisted) ──
 let repliedContacts = loadRepliedContacts();
 
 /**
  * Handle incoming message for auto-reply.
- * Sends welcome message once per contact.
+ * Sends welcome message once per contact per day (24 hours).
  * @param {object} sock - The WhatsApp socket
  * @param {object} msg - The incoming message object
  */
@@ -76,14 +83,22 @@ async function handleAutoReply(sock, msg) {
         // Get sender number (without @s.whatsapp.net)
         const senderNumber = remoteJid.replace('@s.whatsapp.net', '');
 
-        // Skip if we already replied to this contact
-        if (repliedContacts.has(senderNumber)) return;
+        const now = Date.now();
+        const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+
+        // Skip if we already replied to this contact within the last 24 hours
+        if (repliedContacts[senderNumber]) {
+            const lastReplyTime = repliedContacts[senderNumber];
+            if (now - lastReplyTime < TWENTY_FOUR_HOURS) {
+                return; // Sent within the last 24h, skip
+            }
+        }
 
         // Send the welcome message
         await sock.sendMessage(remoteJid, { text: config.welcomeMessage });
 
-        // Mark as replied
-        repliedContacts.add(senderNumber);
+        // Mark as replied with current timestamp
+        repliedContacts[senderNumber] = now;
         saveRepliedContacts(repliedContacts);
 
         console.log(`✅ Auto-reply sent to: ${senderNumber}`);
@@ -97,7 +112,7 @@ async function handleAutoReply(sock, msg) {
  * @returns {number} Number of contacts that were cleared
  */
 function doReset() {
-    const count = repliedContacts.size;
+    const count = Object.keys(repliedContacts).length;
     repliedContacts = resetRepliedContacts();
     console.log(`🔄 Cleared ${count} replied contacts`);
     return count;
@@ -107,7 +122,7 @@ function doReset() {
  * Get the count of replied contacts.
  */
 function getRepliedCount() {
-    return repliedContacts.size;
+    return Object.keys(repliedContacts).length;
 }
 
 module.exports = { handleAutoReply, doReset, getRepliedCount };
