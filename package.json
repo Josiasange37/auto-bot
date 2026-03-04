@@ -1,0 +1,24 @@
+{
+  "name": "la-cosmetics-bot",
+  "version": "1.0.0",
+  "description": "WhatsApp Bot for L-A COSMETICS using Baileys",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "keywords": [
+    "whatsapp",
+    "bot",
+    "baileys"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.16",
+    "express": "^4.21.0",
+    "pino": "^9.6.0",
+    "qrcode": "^1.5.4",
+    "qrcode-terminal": "^0.12.0",
+    "socket.io": "^4.8.0"
+  }
+}
