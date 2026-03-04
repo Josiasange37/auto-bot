@@ -2,7 +2,8 @@ const { connectToWhatsApp } = require('./connection');
 const { handleAutoReply, doReset, getRepliedCount } = require('./autoReply');
 const { handleGroupCommand } = require('./groupManager');
 const config = require('./config');
-const { DisconnectReason } = require('@whiskeysockets/baileys');
+const { handleGroupCommand, handleBotCommand } = require('./groupManager');
+const startKeepAlive = require('./keepAlive'); // Import the keep-alive module
 
 const express = require('express');
 const http = require('http');
@@ -163,4 +164,9 @@ server.listen(PORT, () => {
     } else {
         console.log('📱 No session found — use the web dashboard to connect.\n');
     }
+
+    // Initialize the keep-alive ping system
+    // Render typically provides RENDER_EXTERNAL_URL in production automatically
+    const externalUrl = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
+    startKeepAlive(externalUrl, PORT);
 });
