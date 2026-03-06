@@ -780,150 +780,151 @@
         <div class="logo-inner"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
       </div>
       <h1>L-A COSMETICS</h1>
-      <p>Reponse automatique & Gestion de groupes WhatsApp</p>
+      <p>Auto-reply & WhatsApp Group Management</p>
     </div>
 
     <!-- STATUS -->
     <div class="status-chip-wrap">
       <div class="status-chip disconnected" id="statusBar">
         <div class="status-dot"></div>
-        <span id="statusText">Deconnecte</span>
+        <span id="statusText">Disconnected</span>
       </div>
     </div>
 
     <!-- CONNEXION -->
     <div class="card">
-      <h2><i class="fa-solid fa-link"></i> Connexion</h2>
+      <h2><i class="fa-solid fa-link"></i> Connection</h2>
       <div class="auth-methods" id="authMethods">
         <button class="auth-btn" onclick="connectQR()">
           <i class="fa-solid fa-qrcode"></i>
-          <span>Code QR</span>
-          <small>Scanner avec le telephone</small>
+          <span>QR Code</span>
+          <small>Scan with your phone</small>
         </button>
         <button class="auth-btn" onclick="showPairingInput()">
           <i class="fa-solid fa-key"></i>
-          <span>Code de jumelage</span>
-          <small>Entrer le code sur le telephone</small>
+          <span>Pairing code</span>
+          <small>Enter code on your phone</small>
         </button>
       </div>
       <div class="phone-input-group" id="phoneInput">
         <input type="text" id="phoneNumber" placeholder="237612345678" maxlength="15">
-        <button onclick="connectPairing()">Connecter</button>
+        <button onclick="connectPairing()">Connect</button>
       </div>
       <div class="qr-container" id="qrContainer">
         <div class="qr-wrap"><img id="qrImage" src="" alt="QR"></div>
         <p><i class="fa-solid fa-mobile-screen-button" style="color:var(--pink)"></i>
-          WhatsApp &rarr; Parametres &rarr; Appareils connectes &rarr; Lier</p>
+          WhatsApp &rarr; Settings &rarr; Linked Devices &rarr; Link a device</p>
       </div>
       <div class="pairing-display" id="pairingDisplay">
-        <p style="color:var(--text-dim)">Entrez ce code sur votre telephone :</p>
+        <p style="color:var(--text-dim)">Enter this code on your phone:</p>
         <div class="pairing-code-wrap">
           <div class="pairing-code" id="pairingCode">--------</div>
         </div>
         <p class="instructions">
           <i class="fa-solid fa-mobile-screen-button" style="color:var(--pink)"></i>
-          WhatsApp &rarr; Parametres &rarr; Appareils connectes
-          &rarr; Lier avec numero
+          WhatsApp &rarr; Settings &rarr; Linked Devices
+          &rarr; Link with phone number
         </p>
       </div>
     </div>
 
     <!-- STATS -->
+    <!-- STATS -->
     <div class="card" id="statsCard" style="display:none">
-      <h2><i class="fa-solid fa-chart-simple"></i> Statistiques</h2>
+      <h2><i class="fa-solid fa-chart-simple"></i> Statistics</h2>
       <div class="stats-grid">
         <div class="stat-item">
           <i class="fa-solid fa-signal"></i>
           <div class="value" id="statStatus">&mdash;</div>
-          <div class="label">Statut</div>
+          <div class="label">Status</div>
         </div>
         <div class="stat-item">
           <i class="fa-solid fa-reply-all"></i>
           <div class="value" id="statReplied">0</div>
-          <div class="label">Reponses auto</div>
+          <div class="label">Auto-replies</div>
         </div>
         <div class="stat-item">
           <i class="fa-regular fa-clock"></i>
           <div class="value" id="statUptime">0m</div>
-          <div class="label">Temps actif</div>
+          <div class="label">Uptime</div>
         </div>
       </div>
       <div class="actions">
         <button class="action-btn" onclick="resetReplies()">
-          <i class="fa-solid fa-arrows-rotate"></i> Reinitialiser
+          <i class="fa-solid fa-arrows-rotate"></i> Reset
         </button>
         <button class="action-btn danger" onclick="disconnectBot()">
-          <i class="fa-solid fa-right-from-bracket"></i> Deconnecter
+          <i class="fa-solid fa-right-from-bracket"></i> Disconnect
         </button>
       </div>
     </div>
 
     <!-- LOG -->
     <div class="card">
-      <h2><i class="fa-solid fa-scroll"></i> Activite</h2>
+      <h2><i class="fa-solid fa-scroll"></i> Activity Log</h2>
       <div class="log-area" id="logArea">
-        <div class="log-entry">En attente de connexion...</div>
+        <div class="log-entry">Waiting for connection...</div>
       </div>
     </div>
 
     <!-- COMMANDES -->
     <div class="card">
-      <h2><i class="fa-solid fa-terminal"></i> Commandes</h2>
+      <h2><i class="fa-solid fa-terminal"></i> Commands</h2>
       <table class="commands-table">
         <tr>
-          <th>Commande</th>
+          <th>Command</th>
           <th>Description</th>
-          <th>Ou</th>
+          <th>Where</th>
         </tr>
         <tr>
           <td><code>!help</code></td>
-          <td>Afficher les commandes</td>
-          <td>Partout</td>
+          <td>Show commands</td>
+          <td>Anywhere</td>
         </tr>
         <tr>
           <td><code>!status</code></td>
-          <td>Infos du bot</td>
-          <td>Partout</td>
+          <td>Bot info</td>
+          <td>Anywhere</td>
         </tr>
         <tr>
           <td><code>!resetreplies</code></td>
-          <td>Reinitialiser les reponses</td>
-          <td>Partout</td>
+          <td>Reset auto-replies</td>
+          <td>Anywhere</td>
         </tr>
         <tr>
           <td><code>!groupinfo</code></td>
-          <td>Details du groupe</td>
-          <td>Groupe</td>
+          <td>Group details</td>
+          <td>Group</td>
         </tr>
         <tr>
           <td><code>!tagall [msg]</code></td>
-          <td>Mentionner tous</td>
-          <td>Groupe</td>
+          <td>Tag everyone</td>
+          <td>Group</td>
         </tr>
         <tr>
           <td><code>!kick @user</code></td>
-          <td>Retirer un membre</td>
-          <td>Groupe</td>
+          <td>Remove a member</td>
+          <td>Group</td>
         </tr>
         <tr>
           <td><code>!promote @user</code></td>
-          <td>Rendre admin</td>
-          <td>Groupe</td>
+          <td>Promote to admin</td>
+          <td>Group</td>
         </tr>
         <tr>
           <td><code>!demote @user</code></td>
-          <td>Retirer admin</td>
-          <td>Groupe</td>
+          <td>Demote from admin</td>
+          <td>Group</td>
         </tr>
         <tr>
           <td><code>!groupname [n]</code></td>
-          <td>Renommer le groupe</td>
-          <td>Groupe</td>
+          <td>Rename group</td>
+          <td>Group</td>
         </tr>
         <tr>
           <td><code>!groupdesc [d]</code></td>
-          <td>Changer la description</td>
-          <td>Groupe</td>
+          <td>Change description</td>
+          <td>Group</td>
         </tr>
       </table>
     </div>
@@ -947,28 +948,28 @@
     function addLog(msg, type = '') {
       const e = document.createElement('div');
       e.className = 'log-entry ' + type;
-      e.textContent = '[' + new Date().toLocaleTimeString('fr-FR') + '] ' + msg;
+      e.textContent = '[' + new Date().toLocaleTimeString('en-US') + '] ' + msg;
       logArea.prepend(e);
       while (logArea.children.length > 50) logArea.removeChild(logArea.lastChild);
     }
     function connectQR() {
       hideAll(); qrContainer.classList.add('visible');
       socket.emit('connect-qr');
-      setStatus('connecting', 'Generation du code QR...');
-      addLog('Demande du code QR...', 'warning');
+      setStatus('connecting', 'Generating QR code...');
+      addLog('Requesting QR code...', 'warning');
     }
     function showPairingInput() { phoneInput.classList.add('visible') }
     function connectPairing() {
       const phone = $('phoneNumber').value.trim();
-      if (!phone || phone.length < 10) { alert('Numero invalide'); return }
+      if (!phone || phone.length < 10) { alert('Invalid number'); return }
       hideAll(); pairingDisplay.classList.add('visible');
       socket.emit('connect-pairing', phone);
-      setStatus('connecting', 'Demande du code...');
-      addLog('Code de jumelage pour : ' + phone, 'warning');
+      setStatus('connecting', 'Requesting code...');
+      addLog('Pairing code requested for: ' + phone, 'warning');
     }
-    function resetReplies() { socket.emit('reset-replies'); addLog('Reinitialisation...', 'warning') }
+    function resetReplies() { socket.emit('reset-replies'); addLog('Resetting...', 'warning') }
     function disconnectBot() {
-      if (confirm('Deconnecter le bot ?')) { socket.emit('disconnect-bot'); addLog('Deconnexion...', 'error') }
+      if (confirm('Disconnect bot?')) { socket.emit('disconnect-bot'); addLog('Disconnecting...', 'error') }
     }
     function hideAll() {
       qrContainer.classList.remove('visible');
@@ -988,41 +989,41 @@
 
     socket.on('qr', function (url) {
       $('qrImage').src = url; qrContainer.classList.add('visible');
-      setStatus('connecting', 'Scannez le code QR...');
-      addLog('Code QR recu', 'warning');
+      setStatus('connecting', 'Scan the QR code...');
+      addLog('QR code received', 'warning');
     });
     socket.on('pairing-code', function (code) {
       $('pairingCode').textContent = code; pairingDisplay.classList.add('visible');
-      setStatus('connecting', 'Entrez le code...');
-      addLog('Code : ' + code, 'warning');
+      setStatus('connecting', 'Enter the code...');
+      addLog('Code: ' + code, 'warning');
     });
     socket.on('status', function (d) {
       switch (d.state) {
         case 'connected':
-          setStatus('connected', 'Connecte'); hideAll();
+          setStatus('connected', 'Connected'); hideAll();
           authMethods.style.display = 'none'; statsCard.style.display = 'block';
-          $('statStatus').textContent = 'En ligne';
+          $('statStatus').textContent = 'Online';
           $('statStatus').style.color = 'var(--green)';
           $('statStatus').style.fontSize = '18px';
           if (d.repliedContacts !== undefined) $('statReplied').textContent = d.repliedContacts;
-          startUptime(); addLog('Bot connecte !', 'success'); break;
+          startUptime(); addLog('Bot connected!', 'success'); break;
         case 'connecting': case 'reconnecting':
-          setStatus('connecting', d.state === 'reconnecting' ? 'Reconnexion...' : 'Connexion...');
-          addLog(d.state === 'reconnecting' ? 'Reconnexion...' : 'Connexion...', 'warning'); break;
+          setStatus('connecting', d.state === 'reconnecting' ? 'Reconnecting...' : 'Connecting...');
+          addLog(d.state === 'reconnecting' ? 'Reconnecting...' : 'Connecting...', 'warning'); break;
         case 'disconnected': case 'logged_out':
-          setStatus('disconnected', 'Deconnecte');
+          setStatus('disconnected', 'Disconnected');
           authMethods.style.display = 'grid'; statsCard.style.display = 'none';
           hideAll(); if (uptimeInterval) clearInterval(uptimeInterval);
-          addLog('Bot deconnecte', 'error'); break;
+          addLog('Bot disconnected', 'error'); break;
       }
     });
     socket.on('replies-reset', function (c) {
       $('statReplied').textContent = '0';
-      addLog('Reponses reinitialisees (' + c + ' contacts)', 'success');
+      addLog('Replies reset (' + c + ' contacts)', 'success');
     });
-    socket.on('error', function (m) { addLog('Erreur : ' + m, 'error') });
+    socket.on('error', function (m) { addLog('Error: ' + m, 'error') });
     socket.on('log', function (m) { addLog(m, 'warning') });
-    addLog('Tableau de bord charge.', 'success');
+    addLog('Dashboard loaded.', 'success');
   </script>
 </body>
 

@@ -6,9 +6,10 @@ const config = {
   // Example: '237612345678' for Cameroon
   ownerNumber: '237612345678',
 
-  // ─── Paths ─────────────────────────────────────────
+  // ─── Paths & Database ──────────────────────────────
   sessionFolder: path.join(__dirname, '..', 'session'),
   dataFolder: path.join(__dirname, '..', 'data'),
+  mongoURI: process.env.MONGODB_URI || 'mongodb+srv://almightjosias735_db_user:<db_password>@cluster0.wkdlrdm.mongodb.net/whatsapp-bot?retryWrites=true&w=majority',
 
   // ─── Bot Settings ──────────────────────────────────
   botPrefix: '!',

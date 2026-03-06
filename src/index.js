@@ -149,19 +149,34 @@ io.on('connection', (socket) => {
 // ─── Start Server ─────────────────────────────────────
 const PORT = process.env.PORT || 3000;
 
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
     showBanner();
     console.log(`🌐 Web Dashboard: http://localhost:${PORT}`);
-    console.log(`📂 Session stored in: ${config.sessionFolder}\n`);
 
-    // Auto-reconnect if session exists
-    const fs = require('fs');
-    const sessionCredsPath = path.join(config.sessionFolder, 'creds.json');
-    if (fs.existsSync(sessionCredsPath)) {
-        console.log('📱 Existing session found — auto-reconnecting...\n');
-        startConnection('qr', null);
+    if (config.mongoURI) {
+        const { connectDB } = require('./db');
+        const { initializeAutoReplyDB } = require('./autoReply');
+        try {
+            console.log('\n⏳ Connecting to MongoDB...');
+            await connectDB(config.mongoURI);
+            await initializeAutoReplyDB();
+            console.log('📱 MongoDB configuration found — auto-connecting bot...\n');
+            startConnection('qr', null);
+        } catch (err) {
+            console.error('❌ Failed to connect to MongoDB:', err.message);
+        }
     } else {
-        console.log('📱 No session found — use the web dashboard to connect.\n');
+        console.log(`📂 Session stored locally in: ${config.sessionFolder}\n`);
+
+        // Auto-reconnect if session exists locally
+        const fs = require('fs');
+        const sessionCredsPath = path.join(config.sessionFolder, 'creds.json');
+        if (fs.existsSync(sessionCredsPath)) {
+            console.log('📱 Existing local session found — auto-reconnecting...\n');
+            startConnection('qr', null);
+        } else {
+            console.log('📱 No local session found — use the web dashboard to connect.\n');
+        }
     }
 
     // Initialize the keep-alive ping system
