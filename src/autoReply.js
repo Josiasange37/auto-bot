@@ -4,8 +4,8 @@ const config = require('./config');
 
 const REPLIED_FILE = path.join(config.dataFolder, 'replied-contacts.json');
 
-// ─── Local JSON Fallback Setup ───────────────────────
-function loadRepliedContactsLocal() {
+// ─── Load / Save replied contacts ──────────────────
+function loadRepliedContacts() {
     try {
         if (fs.existsSync(REPLIED_FILE)) {
             const data = JSON.parse(fs.readFileSync(REPLIED_FILE, 'utf-8'));
@@ -18,61 +18,30 @@ function loadRepliedContactsLocal() {
             return data || {};
         }
     } catch (err) {
-        console.error('⚠️  Error loading local replied contacts:', err.message);
+        console.error('⚠️  Error loading replied contacts:', err.message);
     }
     return {};
 }
 
-function saveRepliedContactsLocal(repliedObj) {
+function saveRepliedContacts(repliedObj) {
     try {
         if (!fs.existsSync(config.dataFolder)) {
             fs.mkdirSync(config.dataFolder, { recursive: true });
         }
         fs.writeFileSync(REPLIED_FILE, JSON.stringify(repliedObj, null, 2));
     } catch (err) {
-        console.error('⚠️  Error saving local replied contacts:', err.message);
+        console.error('⚠️  Error saving replied contacts:', err.message);
     }
 }
 
-function resetRepliedContactsLocal() {
+function resetRepliedContacts() {
     const emptyObj = {};
-    saveRepliedContactsLocal(emptyObj);
+    saveRepliedContacts(emptyObj);
     return emptyObj;
 }
 
-// Memory cache for active tracking (syncs with DB/Local async)
-let repliedContactsCache = loadRepliedContactsLocal();
-
-// Used to check if DB is initialized
-let isUsingMongo = false;
-let dbInitializationPromise = null;
-
-const { RepliedContact } = require('./db');
-const mongoose = require('mongoose');
-
-async function syncContactsFromDB() {
-    if (mongoose.connection.readyState !== 1) return;
-    isUsingMongo = true;
-    try {
-        const contacts = await RepliedContact.find({});
-        const cache = {};
-        contacts.forEach(c => {
-            cache[c.phone] = c.timestamp;
-        });
-        repliedContactsCache = cache;
-        console.log(`✅ Loaded ${contacts.length} auto-reply records from MongoDB`);
-    } catch (err) {
-        console.error('❌ Error loading replied contacts from MongoDB:', err.message);
-    }
-}
-
-// Call this from connection.js or index.js to initialize the DB cache
-function initializeAutoReplyDB() {
-    if (!dbInitializationPromise) {
-        dbInitializationPromise = syncContactsFromDB();
-    }
-    return dbInitializationPromise;
-}
+// ─── The replied contacts dictionary (in-memory + persisted) ──
+let repliedContacts = loadRepliedContacts();
 
 /**
  * Handle incoming message for auto-reply.
@@ -116,8 +85,8 @@ async function handleAutoReply(sock, msg) {
         const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
 
         // Skip if we already replied to this contact within the last 24 hours
-        if (repliedContactsCache[senderNumber]) {
-            const lastReplyTime = repliedContactsCache[senderNumber];
+        if (repliedContacts[senderNumber]) {
+            const lastReplyTime = repliedContacts[senderNumber];
             if (now - lastReplyTime < TWENTY_FOUR_HOURS) {
                 return; // Sent within the last 24h, skip
             }
@@ -126,19 +95,9 @@ async function handleAutoReply(sock, msg) {
         // Send the welcome message
         await sock.sendMessage(remoteJid, { text: config.welcomeMessage });
 
-        // Update cache immediately
-        repliedContactsCache[senderNumber] = now;
-
-        // Persist to DB or Local
-        if (isUsingMongo) {
-            await RepliedContact.findOneAndUpdate(
-                { phone: senderNumber },
-                { phone: senderNumber, timestamp: now },
-                { upsert: true }
-            );
-        } else {
-            saveRepliedContactsLocal(repliedContactsCache);
-        }
+        // Mark as replied with current timestamp
+        repliedContacts[senderNumber] = now;
+        saveRepliedContacts(repliedContacts);
 
         console.log(`✅ Auto-reply sent to: ${senderNumber}`);
     } catch (err) {
@@ -151,13 +110,8 @@ async function handleAutoReply(sock, msg) {
  * @returns {number} Number of contacts that were cleared
  */
 function doReset() {
-    const count = Object.keys(repliedContactsCache).length;
-    repliedContactsCache = {};
-    if (isUsingMongo) {
-        RepliedContact.deleteMany({}).catch(err => console.error('Error clearing DB:', err));
-    } else {
-        saveRepliedContactsLocal({});
-    }
+    const count = Object.keys(repliedContacts).length;
+    repliedContacts = resetRepliedContacts();
     console.log(`🔄 Cleared ${count} replied contacts`);
     return count;
 }
@@ -166,7 +120,7 @@ function doReset() {
  * Get the count of replied contacts.
  */
 function getRepliedCount() {
-    return Object.keys(repliedContactsCache).length;
+    return Object.keys(repliedContacts).length;
 }
 
-module.exports = { handleAutoReply, doReset, getRepliedCount, initializeAutoReplyDB };
+module.exports = { handleAutoReply, doReset, getRepliedCount };

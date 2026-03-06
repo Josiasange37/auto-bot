@@ -6,10 +6,9 @@ const config = {
   // Example: '237612345678' for Cameroon
   ownerNumber: '237612345678',
 
-  // ─── Paths & Database ──────────────────────────────
+  // ─── Paths ─────────────────────────────────────────
   sessionFolder: path.join(__dirname, '..', 'session'),
   dataFolder: path.join(__dirname, '..', 'data'),
-  mongoURI: process.env.MONGODB_URI || '',
 
   // ─── Bot Settings ──────────────────────────────────
   botPrefix: '!',
