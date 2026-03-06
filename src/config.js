@@ -9,6 +9,7 @@ const config = {
   // ─── Paths ─────────────────────────────────────────
   sessionFolder: path.join(__dirname, '..', 'session'),
   dataFolder: path.join(__dirname, '..', 'data'),
+  mongoURI: process.env.MONGODB_URI || '',
 
   // ─── Bot Settings ──────────────────────────────────
   botPrefix: '!',

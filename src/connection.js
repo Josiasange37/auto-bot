@@ -8,6 +8,7 @@ const {
 const pino = require('pino');
 const QRCode = require('qrcode');
 const config = require('./config');
+const { useMongoDBAuthState } = require('./mongoAuth');
 
 const logger = pino({ level: 'silent' });
 
@@ -19,7 +20,19 @@ const logger = pino({ level: 'silent' });
  * @returns {Promise<object>} The connected socket
  */
 async function connectToWhatsApp(method, phoneNumber, io) {
-    const { state, saveCreds } = await useMultiFileAuthState(config.sessionFolder);
+    let state, saveCreds;
+
+    if (config.mongoURI) {
+        const mongoAuth = await useMongoDBAuthState('baileys_auth');
+        state = mongoAuth.state;
+        saveCreds = mongoAuth.saveCreds;
+        console.log('📦 Using MongoDB for session persistence');
+    } else {
+        const multiFile = await useMultiFileAuthState(config.sessionFolder);
+        state = multiFile.state;
+        saveCreds = multiFile.saveCreds;
+        console.log('📁 Using local filesystem for session persistence');
+    }
     const { version } = await fetchLatestBaileysVersion();
 
     const sock = makeWASocket({
