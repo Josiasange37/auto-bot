@@ -1,6 +1,5 @@
 const { connectToWhatsApp } = require('./connection');
 const { handleAutoReply, doReset, getRepliedCount } = require('./autoReply');
-const { handleGroupCommand } = require('./groupManager');
 const config = require('./config');
 const { handleGroupCommand, handleBotCommand } = require('./groupManager');
 const startKeepAlive = require('./keepAlive'); // Import the keep-alive module

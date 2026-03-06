@@ -13,27 +13,18 @@ function startKeepAlive(url, port = 3000) {
 
     setInterval(() => {
         try {
-            if (url) {
-                // Ping the external Render URL
-                https.get(url, (res) => {
-                    if (res.statusCode === 200) {
-                        console.log(`[Keep-Alive] Successfully pinged external URL: ${url}`);
-                    } else {
-                        console.log(`[Keep-Alive] External URL returned status: ${res.statusCode}`);
-                    }
-                }).on('error', (err) => {
-                    console.error(`[Keep-Alive] Error pinging external URL: ${err.message}`);
-                });
-            } else {
-                // Fallback: ping localhost
-                http.get(`http://localhost:${port}`, (res) => {
-                    if (res.statusCode === 200) {
-                        console.log(`[Keep-Alive] Successfully pinged localhost on port ${port}`);
-                    }
-                }).on('error', (err) => {
-                    console.error(`[Keep-Alive] Error pinging localhost: ${err.message}`);
-                });
-            }
+            const targetUrl = url || `http://localhost:${port}`;
+            const req = targetUrl.startsWith('https') ? https : http;
+
+            req.get(targetUrl, (res) => {
+                if (res.statusCode === 200) {
+                    console.log(`[Keep-Alive] Successfully pinged: ${targetUrl}`);
+                } else {
+                    console.log(`[Keep-Alive] Ping returned status: ${res.statusCode}`);
+                }
+            }).on('error', (err) => {
+                console.error(`[Keep-Alive] Error pinging ${targetUrl}: ${err.message}`);
+            });
         } catch (error) {
             console.error('[Keep-Alive] Exception during ping:', error.message);
         }
